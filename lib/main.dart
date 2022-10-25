@@ -217,15 +217,26 @@ class _MyAppState extends State<MyApp> {
                 const EdgeInsets.only(left: 10.0, right: 10.0, top: 50),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(primary: Colors.brown),
-                  onPressed: () {
-                    sample4(PrinterBluetooth(bluetoothbasic.BluetoothDevice()
-                      ..name = _device!.name
-                      ..address = _device!.address
-                    ));
+                  onPressed: () async {
+                    // sample4(PrinterBluetooth(bluetoothbasic.BluetoothDevice()
+                    //   ..name = _device!.name
+                    //   ..address = _device!.address
+                    // ));
+                    imageBox.currentState!.changeImage(
+                        await sample4(PrinterBluetooth(bluetoothbasic.BluetoothDevice()
+                          ..name = _device!.name
+                          ..address = _device!.address
+                        ))
+                    );
                   },
                   child: const Text('PRINT TEST 4',
                       style: TextStyle(color: Colors.white)),
                 ),
+              ),
+              Padding(
+                padding:
+                const EdgeInsets.only(left: 10.0, right: 10.0, top: 50),
+                child: ImageBox(key: imageBox),
               ),
             ],
           ),
@@ -285,5 +296,30 @@ class _MyAppState extends State<MyApp> {
         duration: duration,
       ),
     );
+  }
+}
+
+final imageBox = GlobalKey<_ImageBoxState>();
+
+class ImageBox extends StatefulWidget {
+  const ImageBox({Key? key}) : super(key: key);
+
+  @override
+  State<ImageBox> createState() => _ImageBoxState();
+}
+
+class _ImageBoxState extends State<ImageBox> {
+  Uint8List? _image;
+
+  void changeImage(Uint8List newImage) {
+    setState(() {
+      _image = newImage;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _image == null ? Container() :
+      Image.memory(_image!, width: double.infinity, fit:  BoxFit.cover);
   }
 }
